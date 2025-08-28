@@ -1,0 +1,36 @@
+# 핵심 compose 입니다.
+
+version: "3.9"
+
+networks:
+  app-net:
+    driver: bridge
+
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: gurumate
+      POSTGRES_USER: gurumate
+      POSTGRES_PASSWORD: gurumate
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - app-net
+
+  user-service:
+    image: ghcr.io/yourorg/user-service:latest
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/gurumate
+      SPRING_DATASOURCE_USERNAME: gurumate
+      SPRING_DATASOURCE_PASSWORD: gurumate
+    depends_on:
+      - postgres
+    networks:
+      - app-net
+
+volumes:
+  pgdata:

@@ -1,0 +1,7 @@
+# infra repo
+.env*
+acme.json
+*.tfstate
+.terraform/
+.idea/
+.DS_Store
