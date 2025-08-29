@@ -5,3 +5,6 @@ acme.json
 .terraform/
 .idea/
 .DS_Store
+
+## docker-compose ##
+docker-compose.yml
