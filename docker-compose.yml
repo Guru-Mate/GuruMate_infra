@@ -1,5 +1,8 @@
 version: "3.9"
 
+networks:
+  app-net: {}
+
 services:
   db:
     image: postgres:16
@@ -11,23 +14,24 @@ services:
       POSTGRES_DB: gurumate
       TZ: Asia/Seoul
     ports:
-      - "5433:5432"                       # 호스트 5433 사용 권장(충돌 방지)
+      - "5433:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
-      - ./postgres/init:/docker-entrypoint-initdb.d  # 최초 스키마/확장 자동 실행
+      - ./postgres/init:/docker-entrypoint-initdb.d
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U gurumate -d gurumate -h 127.0.0.1 -p 5432"]
       interval: 5s
       timeout: 5s
       retries: 10
+    networks: [app-net]
 
   main_backend:
     build: ../GuruMate_main_backend
     container_name: GuruMate_main_backend
     restart: unless-stopped
     environment:
-      SPRING_PROFILES_ACTIVE: local
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/gurumate  # 컨테이너간 호스트명은 서비스명(db)
+      SPRING_PROFILES_ACTIVE: docker              # ← 컨테이너용 프로파일
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/gurumate
       SPRING_DATASOURCE_USERNAME: gurumate
       SPRING_DATASOURCE_PASSWORD: gurumate_pw
     ports:
@@ -35,6 +39,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    networks: [app-net]
+
 
 #  admin_backend:
 #    build: ./admin-backend
