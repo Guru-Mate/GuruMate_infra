@@ -57,14 +57,17 @@ services:
 #      db:
 #        condition: service_healthy
 #
-#  main_frontend:
-#    build: ./main-frontend
-#    container_name: GuruMate_main_frontend
-#    restart: unless-stopped
-#    ports:
-#      - "3000:3000"
-#    depends_on:
-#      - main_backend
+  main_frontend:
+    build:
+      context: ../GuruMate_main_frontend # 프론트엔드 프로젝트 경로
+      dockerfile: Dockerfile
+    container_name: GuruMate_main_frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80" # 로컬 3000번 포트 -> 컨테이너 80번 포트 (Nginx 기본 포트)
+    depends_on:
+      - main_backend # 백엔드가 실행된 후 프론트가 실행되도록 설정
+    networks: [app-net]
 
 volumes:
   db_data:
