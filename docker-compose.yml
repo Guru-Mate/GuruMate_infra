@@ -30,4 +30,3 @@ services:
       - main_backend
 
 # ❗️ db_data 볼륨은 더 이상 필요 없으므로 제거합니다.
-
